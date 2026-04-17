@@ -31,8 +31,16 @@ pipeline {
                         sh "cp \$SECRET_ENV ./.env"
                         
                         echo "Bắt đầu build Docker Images với biến môi trường xịn..."
-                        // Build Frontend
-                        sh "docker build -t ${ACR_URL}/${FRONTEND_IMAGE}:${TAG} -f docker/frontend/Dockerfile ."
+                        // Build Frontend — pass VITE_* vars as build args so Vite bakes them into the JS bundle
+                        sh """
+                            export \$(cat .env | grep -v '^#' | grep -v '^\\s*\$' | xargs)
+                            docker build \\
+                                --build-arg VITE_SUPABASE_URL=\$VITE_SUPABASE_URL \\
+                                --build-arg VITE_SUPABASE_ANON_KEY=\$VITE_SUPABASE_ANON_KEY \\
+                                --build-arg VITE_SUPABASE_PUBLISHABLE_KEY=\$VITE_SUPABASE_PUBLISHABLE_KEY \\
+                                -t ${ACR_URL}/${FRONTEND_IMAGE}:${TAG} \\
+                                -f docker/frontend/Dockerfile .
+                        """
                         
                         // Build Backend
                         sh "docker build -t ${ACR_URL}/${BACKEND_IMAGE}:${TAG} -f docker/php/Dockerfile ."
