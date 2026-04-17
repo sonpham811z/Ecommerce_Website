@@ -55,6 +55,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "haadtechaks"
 
+  oidc_issuer_enabled = true
+  
   default_node_pool {
     name       = "default"
     node_count = 1
@@ -87,7 +89,7 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Linux"
-  sku_name            = "B1" 
+  sku_name            = "F1" 
 }
 
 # 7. Tạo Azure Web App 
@@ -130,8 +132,8 @@ resource "azurerm_public_ip" "pip" {
   name                = "haadtech-jenkins-pip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"   # <--- Đổi từ Dynamic sang Static
-  sku                 = "Standard" # <--- Khai báo rõ ràng bắt buộc dùng gói Standard
+  allocation_method   = "Static"  
+  sku                 = "Standard"
 }
 
 # 11. Tạo Network Security Group (Mở cửa cho Port 22 và 8080)
