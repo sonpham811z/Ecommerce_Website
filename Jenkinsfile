@@ -54,27 +54,27 @@ pipeline {
             }
         }
 
-        // stage('4. Deploy to AKS') {
-        //     steps {
-        //         script {
-        //             // Dùng chìa khóa Kubeconfig để ra lệnh cho thằng quản đốc AKS
-        //             withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
-        //                 echo "Đang ra lệnh cho cụm AKS cập nhật phiên bản mới..."
+        stage('4. Deploy to AKS') {
+            steps {
+                script {
+                    // Dùng chìa khóa Kubeconfig để ra lệnh cho thằng quản đốc AKS
+                    withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
+                        echo "Đang ra lệnh cho cụm AKS cập nhật phiên bản mới..."
                         
-        //                 // Áp dụng các file cấu hình Deployment/Service trong folder k8s
-        //                 sh "kubectl apply -f k8s/ --kubeconfig=\$KUBECONFIG"
+                        // Áp dụng các file cấu hình Deployment/Service trong folder k8s
+                        sh "kubectl apply -f k8s/ --kubeconfig=\$KUBECONFIG"
                         
-        //                 // Ép các Deployment phải thay container cũ bằng bản image mới vừa build xong
-        //                 sh "kubectl set image deployment/haadtech-frontend frontend=${ACR_URL}/${FRONTEND_IMAGE}:${TAG} --kubeconfig=\$KUBECONFIG"
-        //                 sh "kubectl set image deployment/haadtech-backend backend=${ACR_URL}/${BACKEND_IMAGE}:${TAG} --kubeconfig=\$KUBECONFIG"
+                        // Ép các Deployment phải thay container cũ bằng bản image mới vừa build xong
+                        sh "kubectl set image deployment/haadtech-frontend frontend=${ACR_URL}/${FRONTEND_IMAGE}:${TAG} --kubeconfig=\$KUBECONFIG"
+                        sh "kubectl set image deployment/haadtech-backend backend=${ACR_URL}/${BACKEND_IMAGE}:${TAG} --kubeconfig=\$KUBECONFIG"
                         
-        //                 // Theo dõi quá trình thay máu xem có thành công không
-        //                 sh "kubectl rollout status deployment/haadtech-frontend --kubeconfig=\$KUBECONFIG"
-        //                 sh "kubectl rollout status deployment/haadtech-backend --kubeconfig=\$KUBECONFIG"
-        //             }
-        //         }
-        //     }
-        // }
+                        // Theo dõi quá trình thay máu xem có thành công không
+                        sh "kubectl rollout status deployment/haadtech-frontend --kubeconfig=\$KUBECONFIG"
+                        sh "kubectl rollout status deployment/haadtech-backend --kubeconfig=\$KUBECONFIG"
+                    }
+                }
+            }
+        }
     }
     
     post {
