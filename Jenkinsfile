@@ -61,6 +61,8 @@ pipeline {
                     withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
                         echo "Đang ra lệnh cho cụm AKS cập nhật phiên bản mới..."
                         
+                        sh "kubectl create secret generic supabase-secret --from-env-file=./.env --dry-run=client -o yaml | kubectl apply -f - --kubeconfig=\$KUBECONFIG"
+                        
                         // Áp dụng các file cấu hình Deployment/Service trong folder k8s
                         sh "kubectl apply -f k8s/ --kubeconfig=\$KUBECONFIG"
                         
